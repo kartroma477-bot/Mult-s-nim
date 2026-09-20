@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Личный кабинет — Муль с ним</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDEEE8;
+  --card:#F6F7F3;
+  --ink:#13161B;
+  --ink-soft:#575E66;
+  --line:#CDD0C5;
+  --blue:#1F3BE0;
+  --blue-ink:#12238C;
+  --blue-wash:#E1E5FB;
+  --err:#C0392B;
+  --ok:#1F8A4C;
+  --shadow:rgba(19,22,27,.14);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Golos Text','Helvetica Neue',Arial,sans-serif;
+  font-size:17px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:40px 16px;
+}
+.wrap{width:100%;max-width:440px}
+.logo{
+  text-align:center;
+  font-weight:700;
+  font-size:20px;
+  margin-bottom:24px;
+}
+.logo a{text-decoration:none;color:var(--ink)}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:28px 24px;
+  box-shadow:0 10px 30px var(--shadow);
+}
+.tabs{
+  display:flex;
+  gap:6px;
+  margin-bottom:22px;
+  background:var(--paper);
+  border-radius:12px;
+  padding:4px;
+  border:1px solid var(--line);
+}
+.tab{
+  flex:1;
+  text-align:center;
+  padding:10px 8px;
+  border-radius:9px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  color:var(--ink-soft);
+  user-select:none;
+}
+.tab.active{background:var(--blue);color:#fff}
+.panel{display:none}
+.panel.active{display:block}
+h1{font-size:22px;margin:0 0 6px}
+.sub{color:var(--ink-soft);font-size:14px;margin:0 0 20px}
+label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
+input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-family:inherit;
+  font-size:15px;
+  color:var(--ink);
+}
+input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.btn{
+  width:100%;
+  margin-top:20px;
+  padding:13px 16px;
+  border-radius:12px;
+  border:none;
+  background:var(--blue);
+  color:#fff;
+  font-family:inherit;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+}
+.btn:disabled{opacity:.6;cursor:default}
+.btn.secondary{background:transparent;color:var(--blue);border:1px solid var(--blue)}
+.msg{
+  margin-top:14px;
+  padding:12px 14px;
+  border-radius:10px;
+  font-size:14px;
+  display:none;
+}
+.msg.show{display:block}
+.msg.err{background:#FCEBEA;color:var(--err)}
+.msg.ok{background:#E8F6ED;color:var(--ok)}
+.msg.wait{background:var(--blue-wash);color:var(--blue-ink)}
+.status-badge{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:16px;
+}
+.status-active{background:#E8F6ED;color:var(--ok)}
+.status-pending{background:var(--blue-wash);color:var(--blue-ink)}
+.status-blocked{background:#FCEBEA;color:var(--err)}
+.dash h2{font-size:18px;margin:0 0 4px}
+.dash p{color:var(--ink-soft);font-size:14px;margin:0 0 18px}
+.module-lock{
+  border:1px dashed var(--line);
+  border-radius:14px;
+  padding:18px;
+  text-align:center;
+  color:var(--ink-soft);
+  font-size:14px;
+}
+.linkback{
+  display:block;
+  text-align:center;
+  margin-top:18px;
+  font-size:13px;
+  color:var(--ink-soft);
+  text-decoration:none;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo"><a href="index.html">Муль с ним</a></div>
+  <div class="card">
+
+    <div id="authBlock">
+      <div class="tabs">
+        <div class="tab active" data-tab="login">Вход</div>
+        <div class="tab" data-tab="register">Регистрация</div>
+      </div>
+
+      <div class="panel active" id="panel-login">
+        <h1>С возвращением</h1>
+        <p class="sub">Войдите по почте и паролю</p>
+        <label>Почта</label>
+        <input type="email" id="loginEmail" placeholder="you@mail.ru" autocomplete="email">
+        <label>Пароль</label>
+        <input type="password" id="loginPassword" placeholder="Пароль" autocomplete="current-password">
+        <button class="btn" id="loginBtn">Войти</button>
+        <div class="msg" id="loginMsg"></div>
+      </div>
+
+      <div class="panel" id="panel-register">
+        <h1>Регистрация</h1>
+        <p class="sub">Оставьте заявку — доступ откроется после оплаты</p>
+        <label>Имя</label>
+        <input type="text" id="regName" placeholder="Как к вам обращаться">
+        <label>Почта</label>
+        <input type="email" id="regEmail" placeholder="you@mail.ru" autocomplete="email">
+        <label>Телефон</label>
+        <input type="tel" id="regPhone" placeholder="+7 900 000 00 00">
+        <label>Придумайте пароль</label>
+        <input type="password" id="regPassword" placeholder="Не меньше 6 символов" autocomplete="new-password">
+        <button class="btn" id="registerBtn">Оставить заявку</button>
+        <div class="msg" id="regMsg"></div>
+      </div>
+    </div>
+
+    <div id="dashBlock" style="display:none">
+      <div class="dash">
+        <div id="statusBadge" class="status-badge"></div>
+        <h2 id="dashName">Привет!</h2>
+        <p id="dashText">Загружаем ваш статус…</p>
+        <div id="dashBody"></div>
+        <button class="btn secondary" id="logoutBtn" style="margin-top:18px">Выйти</button>
+      </div>
+    </div>
+
+  </div>
+  <a class="linkback" href="index.html">← Вернуться на главную</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://vuyfupobtdaqcwaapeic.supabase.co";
+const SUPABASE_KEY = "sb_publishable_cwHBm7PGU1DcV6WSFTG8WQ_JJTqCaCP";
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// simple hash so we don't store raw passwords in plain text (not bank-grade, but reasonable for this)
+async function hashPass(pw){
+  const enc = new TextEncoder().encode(pw);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+const tabs = document.querySelectorAll('.tab');
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  tabs.forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+t.dataset.tab).classList.add('active');
+}));
+
+function showMsg(el, text, type){
+  el.textContent = text;
+  el.className = 'msg show ' + type;
+}
+
+document.getElementById('registerBtn').addEventListener('click', async ()=>{
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim().toLowerCase();
+  const phone = document.getElementById('regPhone').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const msg = document.getElementById('regMsg');
+  if(!name || !email || !password || password.length < 6){
+    showMsg(msg, 'Заполните имя, почту и пароль от 6 символов.', 'err');
+    return;
+  }
+  const btn = document.getElementById('registerBtn');
+  btn.disabled = true;
+  const password_hash = await hashPass(password);
+  const { data: existing } = await sb.from('students').select('id').eq('email', email).maybeSingle();
+  if(existing){
+    showMsg(msg, 'Эта почта уже зарегистрирована. Попробуйте войти.', 'err');
+    btn.disabled = false;
+    return;
+  }
+  const { error } = await sb.from('students').insert({
+    full_name: name, email, phone, password_hash, status: 'pending'
+  });
+  btn.disabled = false;
+  if(error){
+    showMsg(msg, 'Ошибка: ' + error.message, 'err');
+    return;
+  }
+  showMsg(msg, 'Заявка создана! После оплаты доступ откроется автоматически — просто зайдите позже по почте и паролю.', 'ok');
+  localStorage.setItem('mn_email', email);
+});
+
+document.getElementById('loginBtn').addEventListener('click', async ()=>{
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
+  const msg = document.getElementById('loginMsg');
+  if(!email || !password){
+    showMsg(msg, 'Введите почту и пароль.', 'err');
+    return;
+  }
+  const password_hash = await hashPass(password);
+  const { data, error } = await sb.from('students').select('*').eq('email', email).maybeSingle();
+  if(error || !data){
+    showMsg(msg, 'Пользователь не найден. Проверьте почту или зарегистрируйтесь.', 'err');
+    return;
+  }
+  if(data.password_hash !== password_hash){
+    showMsg(msg, 'Неверный пароль.', 'err');
+    return;
+  }
+  localStorage.setItem('mn_email', email);
+  renderDash(data);
+});
+
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  localStorage.removeItem('mn_email');
+  document.getElementById('dashBlock').style.display = 'none';
+  document.getElementById('authBlock').style.display = 'block';
+});
+
+function renderDash(data){
+  document.getElementById('authBlock').style.display = 'none';
+  document.getElementById('dashBlock').style.display = 'block';
+  document.getElementById('dashName').textContent = 'Привет, ' + (data.full_name || '') + '!';
+  const badge = document.getElementById('statusBadge');
+  const text = document.getElementById('dashText');
+  const body = document.getElementById('dashBody');
+  if(data.status === 'active'){
+    badge.className = 'status-badge status-active';
+    badge.textContent = 'Доступ открыт';
+    text.textContent = 'Оплата подтверждена, курс уже доступен.';
+    body.innerHTML = '<div class="module-lock">Здесь появятся ссылки на модули курса.</div>';
+  } else if(data.status === 'blocked') {
+    badge.className = 'status-badge status-blocked';
+    badge.textContent = 'Доступ заблокирован';
+    text.textContent = 'Обратитесь в поддержку, если считаете, что это ошибка.';
+    body.innerHTML = '';
+  } else {
+    badge.className = 'status-badge status-pending';
+    badge.textContent = 'Ждём оплату';
+    text.textContent = 'Как только оплата подтвердится, здесь откроются уроки. Обновите страницу после оплаты.';
+    body.innerHTML = '';
+  }
+}
+
+// auto-login if we remember the email (not secure long-term, ok for MVP)
+window.addEventListener('DOMContentLoaded', async ()=>{
+  const savedEmail = localStorage.getItem('mn_email');
+  if(savedEmail){
+    const { data } = await sb.from('students').select('*').eq('email', savedEmail).maybeSingle();
+    if(data) renderDash(data);
+  }
+});
+</script>
+</body>
+</html>
